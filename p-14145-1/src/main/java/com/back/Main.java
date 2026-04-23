@@ -31,6 +31,8 @@ public class Main {
                 System.out.print("작가 : ");
                 ws.author = sc.nextLine();
                 wss[ws.id-1] = ws;
+
+                System.out.printf("%d번 명언이 등록되었습니다.\n", ws.id);
             }
         }
 
