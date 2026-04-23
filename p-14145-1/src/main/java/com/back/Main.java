@@ -33,6 +33,11 @@ public class Main {
                 wss[ws.id-1] = ws;
 
                 System.out.printf("%d번 명언이 등록되었습니다.\n", ws.id);
+            } else if(input.equals("목록")) {
+                System.out.println("번호 / 작가 / 명언\n----------------------");
+                for(int i=wsLastId; i>=0; i--) {
+                    System.out.printf("%d / %s / %s\n", wss[i].id, wss[i].content, wss[i].author);
+                }
             }
         }
 
