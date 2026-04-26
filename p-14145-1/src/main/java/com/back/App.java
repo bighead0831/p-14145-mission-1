@@ -1,12 +1,14 @@
 package com.back;
 
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
 public class App {
     Scanner sc = new Scanner(System.in);
 
-    private WiseSaying[] wss = new WiseSaying[10000]; // 일단 10,000개 받을 수 있게 설정.
-    private int wsLastId = -1; // ws배열에 아무것도 안 들어있으므로, 인덱스 -1로 초기화
+    private List<WiseSaying> wss = new ArrayList<>(); // 일단 10,000개 받을 수 있게 설정.
+//    private int wsLastId = -1; // ws배열에 아무것도 안 들어있으므로, 인덱스 -1로 초기화
     private int cntId = -1; // 꾸준히 오르기만 하는 등록번호 (독고다이~~)
 
     public void run() {
@@ -27,22 +29,22 @@ public class App {
 
     private void register(String cmd) {
 
-        wsLastId++; // 등록하면, ws배열에 하나 추가
+//        wsLastId++; // 등록하면, ws배열에 하나 추가
         System.out.print("명언 : ");
         String content = sc.nextLine();
         System.out.print("작가 : ");
         String author = sc.nextLine();
 
         WiseSaying ws = new WiseSaying(++cntId+1, content, author);
-        wss[wsLastId] = ws;
+        wss.add(ws);
 
         System.out.println("%d번 명언이 등록되었습니다.".formatted(ws.getId()));
     }
 
     private void list() {
         System.out.println("번호 / 작가 / 명언\n----------------------");
-        for(int i=wsLastId; i>=0; i--) {
-            System.out.printf("%d / %s / %s\n", wss[i].getId(), wss[i].getContent(), wss[i].getAuthor());
+        for(WiseSaying ws : wss.reversed()) {
+            System.out.printf("%d / %s / %s\n", ws.getId(), ws.getContent(), ws.getAuthor());
         }
     }
 
@@ -50,11 +52,10 @@ public class App {
         int deleteId = isDelete(cmd);
         if(deleteId==-1) return;
 
-        int deleteRealId = findId(deleteId); // 삭제할 id의 배열에서의 실제 인덱스
-        if(deleteRealId==-1)
+        if(findId(deleteId)==-1)
             System.out.printf("%d번 명언은 존재하지 않습니다.\n", deleteId);
         else {
-            deleteLogic(deleteRealId, deleteId);
+            deleteLogic(deleteId, deleteId);
         }
     }
 
@@ -62,39 +63,36 @@ public class App {
         int modifyId = isModify(cmd);
         if(modifyId==-1) return;
 
-        int modifyRealId = findId(modifyId); // 수정할 id의 배열에서의 실제 인덱스
-        if(modifyRealId==-1)
+        if(findId(modifyId)==-1)
             System.out.printf("%d번 명언은 존재하지 않습니다.\n", modifyId);
         else {
-            modifyLogic(modifyRealId);
+            modifyLogic(modifyId);
         }
     }
 
     /* --- Logic 메서드 모음 --- */
 
     private int findId(int id) {
-        for(int i=0; i<=wsLastId; i++) { // deleteId와 같은 wss배열의 값의 id가 있는지 확인
-            if(wss[i].getId() == id) {
-                return i;
-            }
+        int cnt = 0;
+        for(WiseSaying ws : wss) {
+            if(ws.getId() == id)
+                return cnt;
+            cnt++;
         }
         return -1;
     }
 
     private void deleteLogic(int id, int deleteId) {
-        for(int i=id; i<wsLastId; i++) {
-            wss[i] = wss[i+1];
-        }
-        wss[wsLastId--] = null;
-
+        wss.remove(findId(deleteId));
         System.out.printf("%d번 명언이 삭제되었습니다.\n", deleteId);
     }
 
     private void modifyLogic(int id) {
-        System.out.printf("명언(기존) : %s\n명언 : ", wss[id].getContent());
-        wss[id].setContent(sc.nextLine());
-        System.out.printf("작가(기존) : %s\n작가 : ", wss[id].getAuthor());
-        wss[id].setAuthor(sc.nextLine());
+        WiseSaying ws = wss.get(findId(id));
+        System.out.printf("명언(기존) : %s\n명언 : ", ws.getContent());
+        ws.setContent(sc.nextLine());
+        System.out.printf("작가(기존) : %s\n작가 : ", ws.getAuthor());
+        ws.setAuthor(sc.nextLine());
     }
 
     private int isDelete(String cmd) {
