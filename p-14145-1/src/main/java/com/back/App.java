@@ -36,13 +36,13 @@ public class App {
         WiseSaying ws = new WiseSaying(++cntId+1, content, author);
         wss[wsLastId] = ws;
 
-        System.out.println("%d번 명언이 등록되었습니다.".formatted(ws.id));
+        System.out.println("%d번 명언이 등록되었습니다.".formatted(ws.getId()));
     }
 
     private void list() {
         System.out.println("번호 / 작가 / 명언\n----------------------");
         for(int i=wsLastId; i>=0; i--) {
-            System.out.printf("%d / %s / %s\n", wss[i].id, wss[i].content, wss[i].author);
+            System.out.printf("%d / %s / %s\n", wss[i].getId(), wss[i].getContent(), wss[i].getAuthor());
         }
     }
 
@@ -74,7 +74,7 @@ public class App {
 
     private int findId(int id) {
         for(int i=0; i<=wsLastId; i++) { // deleteId와 같은 wss배열의 값의 id가 있는지 확인
-            if(wss[i].id == id) {
+            if(wss[i].getId() == id) {
                 return i;
             }
         }
@@ -91,10 +91,10 @@ public class App {
     }
 
     private void modifyLogic(int id) {
-        System.out.printf("명언(기존) : %s\n명언 : ", wss[id].content);
-        wss[id].content = sc.nextLine();
-        System.out.printf("작가(기존) : %s\n작가 : ", wss[id].author);
-        wss[id].author = sc.nextLine();
+        System.out.printf("명언(기존) : %s\n명언 : ", wss[id].getContent());
+        wss[id].setContent(sc.nextLine());
+        System.out.printf("작가(기존) : %s\n작가 : ", wss[id].getAuthor());
+        wss[id].setAuthor(sc.nextLine());
     }
 
     private int isDelete(String cmd) {
