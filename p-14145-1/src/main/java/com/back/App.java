@@ -3,12 +3,12 @@ package com.back;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class App {
     Scanner sc = new Scanner(System.in);
 
     private List<WiseSaying> wss = new ArrayList<>(); // 일단 10,000개 받을 수 있게 설정.
-//    private int wsLastId = -1; // ws배열에 아무것도 안 들어있으므로, 인덱스 -1로 초기화
     private int cntId = -1; // 꾸준히 오르기만 하는 등록번호 (독고다이~~)
 
     public void run() {
@@ -28,8 +28,6 @@ public class App {
     /* --- Action 메서드 모음 --- */
 
     private void register(String cmd) {
-
-//        wsLastId++; // 등록하면, ws배열에 하나 추가
         System.out.print("명언 : ");
         String content = sc.nextLine();
         System.out.print("작가 : ");
@@ -72,14 +70,11 @@ public class App {
 
     /* --- Logic 메서드 모음 --- */
 
-    private int findId(int id) {
-        int cnt = 0;
-        for(WiseSaying ws : wss) {
-            if(ws.getId() == id)
-                return cnt;
-            cnt++;
-        }
-        return -1;
+    private int findId(int id) { // 스트림으로 구현!
+        return IntStream.range(0, wss.size())
+                .filter(i -> wss.get(i).getId() == id)
+                .findFirst()
+                .orElse(-1);
     }
 
     private void deleteLogic(int id, int deleteId) {
