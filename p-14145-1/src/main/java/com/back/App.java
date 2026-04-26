@@ -26,14 +26,14 @@ public class App {
     /* --- Action 메서드 모음 --- */
 
     private void register(String cmd) {
-        WiseSaying ws = new WiseSaying();
 
         wsLastId++; // 등록하면, ws배열에 하나 추가
-        ws.id = ++cntId+1;
         System.out.print("명언 : ");
-        ws.content = sc.nextLine();
+        String content = sc.nextLine();
         System.out.print("작가 : ");
-        ws.author = sc.nextLine();
+        String author = sc.nextLine();
+
+        WiseSaying ws = new WiseSaying(++cntId+1, content, author);
         wss[wsLastId] = ws;
 
         System.out.println("%d번 명언이 등록되었습니다.".formatted(ws.id));
