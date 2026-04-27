@@ -1,7 +1,8 @@
 package com.back;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import java.util.Map;
-import java.util.HashMap;
 
 // ? -> & -> =
 public class Rq {
@@ -9,32 +10,32 @@ public class Rq {
     private final String actionName;
 
     public Rq(String cmd) {
-        paramsMap = new HashMap<>();
-
         String[] cmdBits = cmd.split("\\?", 2);
+
         actionName = cmdBits[0];
         String queryString = cmdBits.length>1 ? cmdBits[1].trim() : "";
 
-        String[] queryStringBtis = queryString.split("&");
-
-        for(String queryParam : queryStringBtis) {
-            String[] keyValue = queryParam.split("=", 2);
-            String key = keyValue[0].trim();
-            String value = keyValue.length>1 ? keyValue[1].trim() : "";
-
-            if(value.isEmpty()) {
-                continue;
-            }
-            paramsMap.put(key, value);
-        }
+//        String[] queryStringBtis = queryString.split("&");
+//        for(String queryParam : queryStringBtis) {
+//            String[] keyValue = queryParam.split("=", 2);
+//            String key = keyValue[0].trim();
+//            String value = keyValue.length>1 ? keyValue[1].trim() : "";
+//
+//            if(value.isEmpty()) {
+//                continue;
+//            }
+//            paramsMap.put(key, value);
+//        }
+        paramsMap = Arrays.stream(queryString.split("&"))
+                .map(part -> part.split("=", 2))
+                .filter(bits -> bits.length>1 && !bits[1].trim().isEmpty())
+                .collect(Collectors.toMap(
+                        bits -> bits[0].trim(), bits -> bits[1].trim()
+                ));
     }
 
     public String getParam(String paramName, String defaultValue) {
-        if(paramsMap.containsKey(paramName)) {
-            return paramsMap.get(paramName);
-        } else {
-            return defaultValue;
-        }
+        return paramsMap.getOrDefault(paramName, defaultValue);
     }
 
     public String getActionName() {

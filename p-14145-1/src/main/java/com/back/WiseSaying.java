@@ -1,7 +1,7 @@
 package com.back;
 
 public class WiseSaying {
-    private int id;
+    private final int id;
     private String content;
     private String author;
 
@@ -17,7 +17,6 @@ public class WiseSaying {
     public String getAuthor() { return this.author; }
 
     // Setter Sector
-    public void setId(int id) { this.id = id; }
     public void setContent(String content) { this.content = content; }
     public void setAuthor(String author) { this.author = author; }
 }

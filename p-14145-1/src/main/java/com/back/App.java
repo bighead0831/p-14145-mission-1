@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class App {
-    Scanner sc = new Scanner(System.in);
-
-    private List<WiseSaying> wss = new ArrayList<>(); // 일단 10,000개 받을 수 있게 설정.
-    private int cntId = -1; // 꾸준히 오르기만 하는 등록번호 (독고다이~~)
+    private final Scanner sc = new Scanner(System.in);
+    private final List<WiseSaying> wss = new ArrayList<>();
+    private int cntId = -1; // 꾸준히 오르기만 하는 명언 등록번호 (독고다이~~)
 
     public void run() {
         System.out.println("== 명언 앱 ==");
@@ -20,21 +19,15 @@ public class App {
             Rq rq = new Rq(cmd);
 
             switch (rq.getActionName()) {
-                case "종료":
+                case "종료"-> {
                     System.out.println("프로그램을 종료합니다.");
                     return;
-                case "등록":
-                    actionRegister();
-                    break;
-                case "목록":
-                    actionList();
-                    break;
-                case "삭제":
-                    actionDelete(rq);
-                    break;
-                case "수정":
-                    actionModify(rq);
-                    break;
+                }
+                case "등록" -> actionRegister();
+                case "목록" -> actionList();
+                case "삭제" -> actionDelete(rq);
+                case "수정" -> actionModify(rq);
+                case "도움" -> actionHelp();
             }
         }
     }
@@ -86,6 +79,16 @@ public class App {
         else {
             modifyLogic(id);
         }
+    }
+
+    private void actionHelp() {
+        System.out.println("""
+                = 명령어 목록 =
+                1. 등록
+                2. 목록
+                3. 수정?id={번호}
+                4. 삭제?id={번호}
+                """);
     }
 
     /* --- Logic 메서드 모음 --- */
