@@ -15,19 +15,33 @@ public class App {
         System.out.println("== 명언 앱 ==");
         while(true) {
             System.out.print("명령) ");
-            String cmd = sc.nextLine();
+            String cmd = sc.nextLine().trim();
 
-            if(cmd.equals("종료")) break;
-            else if(cmd.equals("등록")) register(cmd);
-            else if(cmd.equals("목록")) list();
-            else if(cmd.startsWith("삭제")) delete(cmd);
-            else if(cmd.startsWith("수정")) modify(cmd);
+            Rq rq = new Rq(cmd);
+
+            switch (rq.getActionName()) {
+                case "종료":
+                    System.out.println("프로그램을 종료합니다.");
+                    return;
+                case "등록":
+                    actionRegister();
+                    break;
+                case "목록":
+                    actionList();
+                    break;
+                case "삭제":
+                    actionDelete(rq);
+                    break;
+                case "수정":
+                    actionModify(rq);
+                    break;
+            }
         }
     }
 
     /* --- Action 메서드 모음 --- */
 
-    private void register(String cmd) {
+    private void actionRegister() {
         System.out.print("명언 : ");
         String content = sc.nextLine();
         System.out.print("작가 : ");
@@ -36,54 +50,60 @@ public class App {
         WiseSaying ws = new WiseSaying(++cntId+1, content, author);
         wss.add(ws);
 
-        System.out.println("%d번 명언이 등록되었습니다.".formatted(ws.getId()));
+        System.out.println(String.format("%d번 명언이 등록되었습니다.", ws.getId()));
     }
 
-    private void list() {
+    private void actionList() {
         System.out.println("번호 / 작가 / 명언\n----------------------");
         for(WiseSaying ws : wss.reversed()) {
             System.out.printf("%d / %s / %s\n", ws.getId(), ws.getContent(), ws.getAuthor());
         }
     }
 
-    private void delete(String cmd) {
-        int deleteId = isDelete(cmd);
-        if(deleteId==-1) return;
+    private void actionDelete(Rq rq) {
+        int id = rq.getParamInt("id", -1);
+        if(id==-1) {
+            System.out.println("id를 숫자로 입력해주시기 바랍니다.");
+            return;
+        }
 
-        if(findId(deleteId)==-1)
-            System.out.printf("%d번 명언은 존재하지 않습니다.\n", deleteId);
+        if(findById(id)==-1)
+            System.out.printf("%d번 명언은 존재하지 않습니다.\n", id);
         else {
-            deleteLogic(deleteId, deleteId);
+            deleteLogic(id);
         }
     }
 
-    private void modify(String cmd) {
-        int modifyId = isModify(cmd);
-        if(modifyId==-1) return;
+    private void actionModify(Rq rq) {
+        int id = rq.getParamInt("id", -1);
+        if(id==-1) {
+            System.out.println("id를 숫자로 입력해주시기 바랍니다.");
+            return;
+        }
 
-        if(findId(modifyId)==-1)
-            System.out.printf("%d번 명언은 존재하지 않습니다.\n", modifyId);
+        if(findById(id)==-1)
+            System.out.printf("%d번 명언은 존재하지 않습니다.\n", id);
         else {
-            modifyLogic(modifyId);
+            modifyLogic(id);
         }
     }
 
     /* --- Logic 메서드 모음 --- */
 
-    private int findId(int id) { // 스트림으로 구현!
+    private int findById(int id) { // 스트림으로 구현!
         return IntStream.range(0, wss.size())
                 .filter(i -> wss.get(i).getId() == id)
                 .findFirst()
                 .orElse(-1);
     }
 
-    private void deleteLogic(int id, int deleteId) {
-        wss.remove(findId(deleteId));
-        System.out.printf("%d번 명언이 삭제되었습니다.\n", deleteId);
+    private void deleteLogic(int id) {
+        wss.remove(findById(id));
+        System.out.printf("%d번 명언이 삭제되었습니다.\n", id);
     }
 
     private void modifyLogic(int id) {
-        WiseSaying ws = wss.get(findId(id));
+        WiseSaying ws = wss.get(findById(id));
         System.out.printf("명언(기존) : %s\n명언 : ", ws.getContent());
         ws.setContent(sc.nextLine());
         System.out.printf("작가(기존) : %s\n작가 : ", ws.getAuthor());
