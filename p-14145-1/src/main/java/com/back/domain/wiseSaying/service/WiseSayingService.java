@@ -1,5 +1,44 @@
 package com.back.domain.wiseSaying.service;
-//역할 : 순수 비지니스 로직
-//스캐너 사용금지, 출력 금지
+
+import com.back.WiseSaying;
+import com.back.domain.wiseSaying.repository.WiseSayingRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/* --- 요리주방 |  --- */
+// Service: 사용자의 요청을 처리하는 역할 (비즈니스 로직 담당)
 public class WiseSayingService {
+    private final WiseSayingRepository wiseSayingRepository;
+
+    public WiseSayingService() {
+        wiseSayingRepository = new WiseSayingRepository();
+    }
+
+    public WiseSaying write(String content, String author) {
+        WiseSaying ws = new WiseSaying(0, content, author);
+        wiseSayingRepository.save(ws);
+        return ws;
+    }
+
+    public List<WiseSaying> findForList() {
+        return wiseSayingRepository.findAll();
+    }
+
+    public boolean findById(int id) {
+        return wiseSayingRepository.isIdReal(id);
+    }
+
+    public void delete(int id) {
+        wiseSayingRepository.remove(id);
+    }
+
+    public WiseSaying getById(int id) {
+        return wiseSayingRepository.getDataById(id);
+    }
+
+    public void modify(int id, String content, String author) {
+        WiseSaying ws = new WiseSaying(id, content, author);
+        wiseSayingRepository.alter(ws);
+    }
 }

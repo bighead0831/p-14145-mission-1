@@ -1,58 +1,47 @@
 package com.back;
-
 import java.util.Arrays;
-import java.util.stream.Collectors;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-// ? -> & -> =
+// Requset : 사용자의 명령 분석 담당
 public class Rq {
-    private final Map<String, String> paramsMap;
     private final String actionName;
+    private Map<String, String> params;
 
     public Rq(String cmd) {
-        String[] cmdBits = cmd.split("\\?", 2);
-
+        String[] cmdBits = cmd.split("\\?");
         actionName = cmdBits[0];
-        String queryString = cmdBits.length>1 ? cmdBits[1].trim() : "";
 
-//        String[] queryStringBtis = queryString.split("&");
-//        for(String queryParam : queryStringBtis) {
-//            String[] keyValue = queryParam.split("=", 2);
-//            String key = keyValue[0].trim();
-//            String value = keyValue.length>1 ? keyValue[1].trim() : "";
-//
-//            if(value.isEmpty()) {
-//                continue;
-//            }
-//            paramsMap.put(key, value);
-//        }
-        paramsMap = Arrays.stream(queryString.split("&"))
-                .map(part -> part.split("=", 2))
-                .filter(bits -> bits.length>1 && !bits[1].trim().isEmpty())
-                .collect(Collectors.toMap(
-                        bits -> bits[0].trim(), bits -> bits[1].trim()
-                ));
+        String queryString = cmdBits.length == 1 ? "" : cmdBits[1].trim();
+
+        if (queryString.isBlank()) { // actionName외 아무 파라미터도 없는 경우
+            params = Map.of();
+            return;
+        }
+
+
+        params = Arrays.stream(queryString.trim().split("&"))
+                .map(paramStr -> paramStr.trim().split("=", 2))
+                .filter(paramStrBits -> paramStrBits.length == 2 && !paramStrBits[0].isBlank() && !paramStrBits[1].isBlank())
+                .collect(Collectors.toMap(paramStrBits -> paramStrBits[0], paramStrBits -> paramStrBits[1]));
     }
-
-    public String getParam(String paramName, String defaultValue) {
-        return paramsMap.getOrDefault(paramName, defaultValue);
-    }
-
     public String getActionName() {
         return actionName;
     }
 
-    public int getParamInt(String paramName, int defaultValue) {
-        String value = getParam(paramName, "");
+    public int getParamInt(String name, int defaultValue) {
+        String value = getParam(name, "");
 
-        if(value.isEmpty()) {
-            return defaultValue;
-        }
+        if (value.equals("")) { return defaultValue; }
 
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
             return defaultValue;
         }
+    }
+
+    private String getParam(String name, String defaultValue) {
+        return params.getOrDefault(name, defaultValue);
     }
 }
